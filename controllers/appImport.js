@@ -150,7 +150,7 @@ app.service('initImport', function($http, $timeout, importStatus) {
 	
 	function putLogs(scope,logs) {
 
-		var logsCount = logs.length; console.log(logsCount);
+		var logsCount = logs.length;
 		var logsLeft = logsCount;
 
 		if (logsCount > 0) {

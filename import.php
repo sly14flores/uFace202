@@ -201,7 +201,8 @@
 				</div>
 			  </div>
 			  <div class="form-group">&nbsp;</div>			  
-			  <button type="button" class="btn btn-primary pull-right" import-logs>Import</button>			  
+			  <button type="button" class="btn btn-primary pull-right" style="margin-bottom: 25px;" import-logs>Import</button>
+			  <div style="clear: both;"></div>
 			</form>
 		</div>
 		<div class="col-lg-6">
@@ -221,6 +222,40 @@
 					<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: {{view.importProgress}}%;"></div>
 					<div class="progress-text">{{view.importProgressDetail}}</div>
 				</div>
+			</div>
+			<div class="">
+				<div class="panel panel-default">
+				  <div class="panel-heading">
+					<h3 class="panel-title">Utilities</h3>
+				  </div>
+				  <div class="panel-body">
+					<ol class="breadcrumb">
+						<li class="active"><strong>Regenerate Month</li>
+					</ol>
+					<div class="col-sm-6">
+						<form>
+						  <div class="form-group">
+							<label>ID: From</label>
+							<input type="text" class="form-control">
+						  </div>
+						  <div class="form-group">
+							<label>ID: To</label>
+							<input type="text" class="form-control">
+						  </div>						  
+						  <div class="form-group">
+							<label>Month</label>
+							<select class="form-control">
+								<option value="">-</option>
+							</select>
+						  </div>
+						  <button type="button" class="btn btn-primary" regenerate-month>Go</button>
+						</form>
+					</div>
+					<div class="col-sm-6">
+						<div class="alert alert-danger" role="alert">...</div>
+					</div>
+				  </div>
+				</div>				
 			</div>
 		</div>
 	  </div>
