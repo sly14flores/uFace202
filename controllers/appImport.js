@@ -410,6 +410,63 @@ app.service('importStatus', function() {
 	
 });
 
+app.directive('regenerateMonth', function($http,importStatus) {
+	return {
+	   restrict: 'A',
+	   link: function(scope, element, attrs) {
+		  
+		  element.bind('click', function() {
+
+			scope.$apply(function() {		  
+				angular.forEach(scope.regen, function(item,i) {
+					scope.view['regen'+i] = false;
+				});
+				scope.view.regenAlert = false;
+				scope.view.regenMsg = '';
+			});
+
+			scope.$apply(function() {
+				angular.forEach(scope.regen, function(item,i) {
+					if ((item == undefined) || (item == '')) {
+						scope.view['regen'+i] = true;
+						if ((i == 'idFrom') || (i == 'idTo')) if (scope.view.regenMsg == '') scope.view.regenMsg += ' Please specify ID From and ID To. To regen one ID, specify same ID for both fields.';
+						if (i == 'month') scope.view.regenMsg += ' Please select month';
+						scope.view.regenAlert = true;						
+					}
+				});
+				if (parseInt(scope.regen.idFrom) > parseInt(scope.regen.idTo)) {
+					scope.view.regenMsg += ' Invalid ID range. ID From must not be greater than ID To';					
+					scope.view.regenAlert = true;
+				}
+			});
+			
+			if (scope.view.regenAlert) return;
+			
+			// regen month
+			
+			$http({
+			  method: 'POST',
+			  url: 'ajax.php?r=regen_month',
+			  data: scope.regen
+			}).then(function mySucces(response) {
+				
+				response.data.forEach(function(item, index) {
+					importStatus.show(item[0],item[1],item[2]);
+					$('.output').scrollTop(($('.output')[0]).scrollHeight);
+				});
+				
+			}, function myError(response) {
+				 
+			  // error
+				
+			});			
+			
+		  });
+
+	   }
+	};
+});
+
 app.controller('appImportCtrl', function($scope, $http, importStatus) {
 	
 	$scope.view = {};
@@ -424,6 +481,30 @@ app.controller('appImportCtrl', function($scope, $http, importStatus) {
 	
 	$scope.view.usePreviousFile = false;
 	$scope.view.pFDisabled = false;
+	
+	$scope.view.regenAlert = false;
+	$scope.view.regenMsg = '';
+	
+	$scope.view.months = {
+		January: "01",
+		February: "02",
+		March: "03",
+		April: "04",
+		May: "05",
+		June: "06",
+		July: "07",
+		August: "08",
+		September: "09",
+		October: "10",
+		November: "11",
+		December: "12"
+	};	
+	
+	$scope.regen = {
+		idFrom: '',
+		idTo: '',
+		month: ''
+	};
 	
 	$scope.frmImport = {};
 	

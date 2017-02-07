@@ -186,6 +186,24 @@ echo json_encode($response);
 
 break;
 
+case "regen_month":
+
+$sybase = new dtrExportSybasePMIS("inout");
+$date = date("Y-").$_POST['month']."-01";
+
+for ($pers_id = $_POST['idFrom']; $pers_id <= $_POST['idTo']; $pers_id++) {
+	
+	$deleteMonth = $sybase->deleteMonth($pers_id,date("m",strtotime($date)),date("Y",strtotime($date)));
+	if ($deleteMonth) {
+		$buildMonth = $sybase->buildMonth($pers_id,date("m",strtotime($date)),date("Y",strtotime($date)));
+	};
+	
+};
+
+echo json_encode(array(array(200,'','a')));
+
+break;
+
 }
 
 ?>

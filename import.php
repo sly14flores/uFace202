@@ -234,17 +234,17 @@
 					</ol>
 					<div class="col-sm-6">
 						<form>
-						  <div class="form-group">
+						  <div class="form-group" ng-class="{'has-error': view.regenidFrom}">
 							<label>ID: From</label>
-							<input type="text" class="form-control">
+							<input type="text" class="form-control" ng-model="regen.idFrom">
 						  </div>
-						  <div class="form-group">
+						  <div class="form-group" ng-class="{'has-error': view.regenidTo}">
 							<label>ID: To</label>
-							<input type="text" class="form-control">
+							<input type="text" class="form-control" ng-model="regen.idTo">
 						  </div>						  
-						  <div class="form-group">
+						  <div class="form-group" ng-class="{'has-error': view.regenmonth}">
 							<label>Month</label>
-							<select class="form-control">
+							<select class="form-control" ng-model="regen.month" ng-options="x for (x,y) in view.months track by y">
 								<option value="">-</option>
 							</select>
 						  </div>
@@ -252,7 +252,7 @@
 						</form>
 					</div>
 					<div class="col-sm-6">
-						<div class="alert alert-danger" role="alert">...</div>
+						<div class="alert alert-danger" role="alert" ng-show="view.regenAlert">{{view.regenMsg}}</div>
 					</div>
 				  </div>
 				</div>				
