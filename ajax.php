@@ -142,15 +142,38 @@ if ($src == "dat") {
 	
 } else {
 	
-	if ($filename == "MSEEDBioOfficedb") {
+	if ($filename == "MSEEDBioOfficedb") { // mseed
 		$mseed = new dtrImportMSeed("DTR");
 		$logs = $mseed->logsFiltered($from,$to,$idFrom,$idTo);
-	} else {
+	} else if ($filename == "NITGENDBAC") { // nitgen
 		$nitgen = new dtrImportNitgen("NGAC_LOG");
 		$logs = $nitgen->logsFiltered($from,$to,$idFrom,$idTo);
-	}
+	} else { // backlogs
+		$backlog = new pdo_db("dtr");
+		$filter = " WHERE log_time >= #".implode("-",$from)." 00:00:00# AND log_time <= #".implode("-",$to)." 23:59:09#";
+
+		$sql = "SELECT log_time, pers_id, machine_no FROM dtr$filter";
+		$backlogs = $backlog->getData($sql);
+		foreach ($backlogs as $i => $log) {
+			$logs[] = array("date"=>date("Y-m-d",strtotime($log['log_time'])),"pers_id"=>$log['pers_id'],"log"=>$log['log_time'],"machine"=>$log['machine_no']);
+		};
+		
+		if ( ($idFrom != 0) && ($idTo != 0) ) {
+			$logsUnfiltered = $logs;
+			$logs = [];
+			for ($id=$idFrom; $id<=$idTo; ++$id) {
+				
+				foreach($logsUnfiltered as $i => $row) {
+
+					if ("$id" == $row['pers_id']) $logs[] = $row;
+				
+				};
+				
+			};
+		};
+	};
 	
-}
+};
 
 echo json_encode($logs);
 
@@ -200,7 +223,7 @@ for ($pers_id = $_POST['idFrom']; $pers_id <= $_POST['idTo']; $pers_id++) {
 	
 };
 
-echo json_encode(array(array(200,'','a')));
+echo json_encode(array(array(200,'Month regeneration successful','a')));
 
 break;
 

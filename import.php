@@ -136,9 +136,10 @@
 						<label class="control-label">Source:&nbsp;</label>
 						<select class="form-control" ng-model="view.source" select-source>
 							<option value="-">-</option>
-							<option value="uface202_mdb">Uface202 dat mdb</option>							
+							<option value="uface202_mdb">Uface202 mdb</option>							
 							<option value="uface202_dat">Uface202 dat file</option>
-							<option value="nitgen">Nitgen mdb</option>							
+							<option value="nitgen">Nitgen mdb</option>
+							<option value="backlogs">Backlogs</option>
 						</select>
 					  </div>				
 					</form>

@@ -112,6 +112,13 @@ app.service('initImport', function($http, $timeout, importStatus) {
 		
 		break;
 		
+		case "backlogs":
+			
+			var logFile = 'backlogs.accdb';
+			importStatus.show(200,'Locating backlogs.accdb...','a');			
+			
+		break;
+		
 		}
 		
 		importStatus.show(200,'Collecting logs from '+scope.view.logSource,'a');
@@ -130,7 +137,6 @@ app.service('initImport', function($http, $timeout, importStatus) {
 				}
 
 				if (response.data[0]['date']) { // if there's at least 1 log put it
-					// console.log(response.data);
 					putLogs(scope,response.data);
 				}
 			
@@ -247,7 +253,7 @@ app.directive('importLogs', function($http, fileUpload, importStatus, initImport
 					importStatus.show(400,'Please select source','r');
 					return;
 			   }
-				console.log(scope.frmImport.idFrom);
+
 				if ( ((scope.frmImport.idFrom != "") && (scope.frmImport.idTo == "")) || ((scope.frmImport.idFrom != null) && (scope.frmImport.idTo == null)) ) {
 					importStatus.show(400,'Please fill up both ID field','r');
 					return;					
@@ -347,6 +353,13 @@ app.directive('importLogs', function($http, fileUpload, importStatus, initImport
 				
 			   break;
 			   
+			   case "backlogs":
+
+					scope.view.logSource = 'backlogs.accdb, back up logs from previous imports.';		
+					initImport.start(scope);						   
+			   
+			   break;
+			   
 			   }
 
 		  });
@@ -381,6 +394,10 @@ app.directive('selectSource', function(importStatus) {
 						
 						case "nitgen":
 							importStatus.show(200,'Please make sure NITGENDBAC.mdb was uploaded to the server via ftp...','r');
+						break;
+						
+						case "backlogs":
+							importStatus.show(200,'Backlogs selected as source...','r');
 						break;
 						
 						default:
