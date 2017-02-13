@@ -4,7 +4,7 @@ $_POST = json_decode(file_get_contents('php://input'), true);
 
 require_once 'devices.php';
 require_once 'db.php';
-require_once 'dtrExportSybasePMIS.php';
+// require_once 'dtrExportSybasePMIS.php';
 require_once 'dtrImportMSeed.php';
 require_once 'dtrImportNitgen.php';
 
@@ -68,6 +68,8 @@ case "count_months":
 $ids = [];
 $buildMonths = [];
 
+require_once 'dtrExportSybasePMIS.php';
+
 $sybase = new dtrExportSybasePMIS("inout");
 $results = $sybase->getData("SELECT pers_id FROM personal");
 
@@ -103,6 +105,8 @@ break;
 
 case "build_months":
 	
+	require_once 'dtrExportSybasePMIS.php';	
+	
 	$sybase = new dtrExportSybasePMIS("inout");
 
 	$month = date("m");
@@ -137,6 +141,7 @@ $logs = [];
 
 if ($src == "dat") {
 	
+	require_once 'dtrExportSybasePMIS.php';	
 	$sybase = new dtrExportSybasePMIS("inout");
 	$logs = $sybase->logsFiltered($_POST['logFile'],$from,$to,$idFrom,$idTo);
 	
@@ -182,34 +187,115 @@ break;
 case "put_logs":
 
 $response = [];
-$sybase = new dtrExportSybasePMIS("inout");
 $backlog = new pdo_db("dtr");
 
-/**
-*** insert month if not created yet
-**/
-$buildMonth = $sybase->buildMonth($_POST['pers_id'],date("m",strtotime($_POST['date'])),date("Y",strtotime($_POST['date'])));
+switch ($_GET['destination']) {
 
-if ($buildMonth == "no_record") {
-	$response[] = array(300,$_POST['pers_id']." has no record in database","a");
-	echo json_encode($response);
-	exit();
+case "sybase":
+
+	require_once 'dtrExportSybasePMIS.php';
+	
+	$sybase = new dtrExportSybasePMIS("inout");
+
+	/**
+	*** insert month if not created yet
+	**/
+	$buildMonth = $sybase->buildMonth($_POST['pers_id'],date("m",strtotime($_POST['date'])),date("Y",strtotime($_POST['date'])));
+
+	if ($buildMonth == "no_record") {
+		$response[] = array(300,$_POST['pers_id']." has no record in database","a");
+		echo json_encode($response);
+		exit();
+	}
+
+	$putLog = $sybase->updateLog($_POST['pers_id'],logOrder($_POST['date'],$_POST['log']),$_POST['log'],date("M",strtotime($_POST['date'])),date("j",strtotime($_POST['date'])),date("Y",strtotime($_POST['date'])));
+	$backlog->backLog($_POST);
+
+	if ($putLog['formerLog'] == 1) $response[] = array(200,"Imported ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'],"a");
+
+	if (($putLog['formerLog'] == 0) && ($putLog['mostRecentLog'] == 0)) $response[] = array(300,"Skipped ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'],"a");
+
+	if ($putLog['mostRecentLog'] == 1) $response[] = array(300,"Imported ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'].", overwritten previous entry","a");
+
+break;
+
+case "web":
+
+	require_once 'db_web.php';
+	
+	$con = new pdo_db_web("tblempdtr");
+	
+	/*
+	** build month
+	*/
+	$start_cache = date("Y-m-01",strtotime($_POST['date']));
+	$start = date("Y-m-01",strtotime($_POST['date']));
+	$end = date("Y-m-t",strtotime($_POST['date']));		
+	
+	$DTRID = "DTR".date("Ym01",strtotime($_POST['date'])).$_POST['pers_id'];
+	$month = $con->getData("SELECT * FROM tblempdtr WHERE DTRID = '$DTRID' AND EmpID = '$_POST[pers_id]'");
+		
+	$dtr = [];
+	while (strtotime($start) <= strtotime($end)) {			
+		
+		$sql = "SELECT * FROM tblempdtr WHERE DTRID = 'DTR".date("Ymd",strtotime($start)).$_POST['pers_id']."'";
+		$checkDtr = $con->getData($sql);
+		if ($con->rows > 0) {
+			$start = date("Y-m-d", strtotime("+1 day", strtotime($start)));				
+			continue;
+		}
+		
+		$dtr[] = array(
+					"DTRID"=>"DTR".date("Ymd",strtotime($start)).$_POST['pers_id'],
+					"EmpID"=>$_POST['pers_id'],
+					"DayStatusID"=>"",
+					"DTRIN01"=>"1970-01-01 00:00:01",
+					"DTROUT01"=>"1970-01-01 00:00:01",
+					"DTRIN02"=>"1970-01-01 00:00:01",
+					"DTROUT02"=>"1970-01-01 00:00:01",
+					"DTRIN03"=>"1970-01-01 00:00:01",
+					"DTROUT03"=>"1970-01-01 00:00:01",
+					"DTRIN04"=>"1970-01-01 00:00:01",
+					"DTROUT04"=>"1970-01-01 00:00:01",
+					"DTRLates"=>"",
+					"DTROverTime"=>"",
+					"DTRHrsWeek"=>"",
+					"DTRVerCode"=>"",
+					"DTRRemarks"=>"",
+					"RECORD_TIME"=>date("Y-m-d H:i:s")
+				);
+		
+		$start = date("Y-m-d", strtotime("+1 day", strtotime($start)));	
+		
+	};
+	
+	$buildMonth = $con->insertDataMulti($dtr);
+
+	/*
+	** update log
+	*/
+	
+	$dtr = [];
+	$dtrinout = array("DTRIN01","DTROUT01","DTRIN02","DTROUT02");
+	$dtr["DTRID"] = "DTR".date("Ymd",strtotime($_POST['date'])).$_POST['pers_id'];
+	$dtr[$dtrinout[logOrder($_POST['date'],$_POST['log'])]] = $_POST['log'];
+	
+	$updateLog = $con->updateData($dtr,"DTRID");
+	
+	$response[] = array(200,"Imported ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'],"a");
+	
+	
+break;
+
 }
-
-$putLog = $sybase->updateLog($_POST['pers_id'],logOrder($_POST['date'],$_POST['log']),$_POST['log'],date("M",strtotime($_POST['date'])),date("j",strtotime($_POST['date'])),date("Y",strtotime($_POST['date'])));
-$backlog->backLog($_POST);
-
-if ($putLog['formerLog'] == 1) $response[] = array(200,"Imported ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'],"a");
-
-if (($putLog['formerLog'] == 0) && ($putLog['mostRecentLog'] == 0)) $response[] = array(300,"Skipped ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'],"a");
-
-if ($putLog['mostRecentLog'] == 1) $response[] = array(300,"Imported ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'].", overwritten previous entry","a");
 
 echo json_encode($response);
 
 break;
 
 case "regen_month":
+
+require_once 'dtrExportSybasePMIS.php';
 
 $sybase = new dtrExportSybasePMIS("inout");
 $date = date("Y-").$_POST['month']."-01";

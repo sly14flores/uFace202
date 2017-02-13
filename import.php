@@ -141,7 +141,14 @@
 							<option value="nitgen">Nitgen mdb</option>
 							<option value="backlogs">Backlogs</option>
 						</select>
-					  </div>				
+					  </div>
+					  <div class="form-group">
+						<label class="control-label">Destination:&nbsp;</label>
+						<select class="form-control" ng-model="view.destination" select-destination>
+							<option value="sybase">PMIS Sybase</option>
+							<option value="web">PMIS Web</option>
+						</select>
+					  </div>					  
 					</form>
 					<p>&nbsp;</p>
 					<input type="file" name="logFile" id="logFile" file-model="view.logFile" ng-disabled="view.logFileDisabled">

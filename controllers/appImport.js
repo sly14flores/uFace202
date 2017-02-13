@@ -176,7 +176,7 @@ app.service('initImport', function($http, $timeout, importStatus) {
 			
 			$http({
 				method: 'POST',
-				url: 'ajax.php?r=put_logs',
+				url: 'ajax.php?r=put_logs&destination='+scope.view.destination,
 				data: item,
 				headers : {'Content-Type': 'application/x-www-form-urlencoded'}
 			}).then(function mySucces(response) {
@@ -554,6 +554,7 @@ app.controller('appImportCtrl', function($scope, $http, importStatus) {
 	}
 	
 	$scope.view.source = "-";
+	$scope.view.destination = "sybase";
 	$scope.view.logFileDisabled = true;
 	
 });
