@@ -380,7 +380,7 @@ class dtrExportSybasePMIS {
 	
 }
 
-function logOrder($date,$log) {
+/* function logOrder($date,$log) {
 
 	$order = 0;
 	
@@ -399,7 +399,7 @@ function logOrder($date,$log) {
 	
 	return $order;
 
-}
+} */
 
 function logger($txt) {
 

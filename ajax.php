@@ -221,6 +221,7 @@ break;
 
 case "web":
 
+	// require_once 'dtrExportSybasePMIS.php';
 	require_once 'db_web.php';
 	
 	$con = new pdo_db_web("tblempdtr");
@@ -312,6 +313,27 @@ for ($pers_id = $_POST['idFrom']; $pers_id <= $_POST['idTo']; $pers_id++) {
 echo json_encode(array(array(200,'Month regeneration successful','a')));
 
 break;
+
+}
+
+function logOrder($date,$log) {
+
+	$order = 0;
+	
+	$morning_cutoff = strtotime("$date 10:01:00");
+	$afternoon_cutoff = strtotime("$date 15:01:00");
+	$lunch_cutoff = strtotime("$date 12:30:59");
+	$ot_cutoff = strtotime("$date 17:00:00");
+
+	$tlog = strtotime($log);
+	
+	if ( ($tlog < $morning_cutoff) && ($tlog <= $lunch_cutoff) ) $order = 0;		
+	if ( ($tlog >= $morning_cutoff) && ($tlog <= $lunch_cutoff) ) $order = 1;
+
+	if ( ($tlog < $afternoon_cutoff) && ($tlog > $lunch_cutoff) ) $order = 2;
+	if ( ($tlog >= $afternoon_cutoff) && ($tlog > $lunch_cutoff) ) $order = 3;
+	
+	return $order;
 
 }
 
