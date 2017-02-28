@@ -225,6 +225,7 @@ case "web":
 	require_once 'db_web.php';
 	
 	$con = new pdo_db_web("tblempdtr");
+	$backlog = new pdo_db("dtr");	
 	
 	/*
 	** build month
@@ -282,6 +283,7 @@ case "web":
 	$dtr[$dtrinout[logOrder($_POST['date'],$_POST['log'])]] = $_POST['log'];
 	
 	$updateLog = $con->updateData($dtr,"DTRID");
+	$backlog->backLog($_POST);
 	
 	$response[] = array(200,"Imported ".date("h:i A m/d/Y",strtotime($_POST['log']))." for ".$_POST['pers_id'],"a");
 	
