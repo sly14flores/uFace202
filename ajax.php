@@ -29,7 +29,10 @@ switch ($_GET['r']) {
 
 case "upload_log":
 	
-	$dir = "dtr-files/";
+	$dir = "sybase/";
+	
+	if ($_GET['destination'] == "web") $dir = "web/";
+	
 	$fn = $_FILES['file']['name'];
 
 	move_uploaded_file($_FILES['file']['tmp_name'],$dir.$fn);

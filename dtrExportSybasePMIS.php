@@ -305,7 +305,10 @@ class dtrExportSybasePMIS {
 	
 	function logsFiltered($logFile,$from,$to,$idFrom,$idTo) {
 		
-		$dir = "dtr-files";
+		$dir = "sybase/";
+	
+		if ($_GET['destination'] == "web") $dir = "web/";
+		
 		$dtr_file = "$dir/$logFile";
 		
 		$logs = [];

@@ -125,7 +125,7 @@ app.service('initImport', function($http, $timeout, importStatus) {
 		
 		$http({
 			method: 'POST',
-			url: 'ajax.php?r=collect_logs',
+			url: 'ajax.php?r=collect_logs&destination='+scope.view.destination,
 			data: {logFile: logFile, from: scope.frmImport['dateFrom'], to: scope.frmImport['dateTo'], idFrom: scope.frmImport['idFrom'], idTo: scope.frmImport['idTo']},
 			headers : {'Content-Type': 'application/x-www-form-urlencoded'}
 		}).then(function mySucces(response) {
@@ -332,7 +332,7 @@ app.directive('importLogs', function($http, fileUpload, importStatus, initImport
 						initImport.start(scope);
 						importStatus.show(200,'Using previously uploaded file...','a');
 				   } else {
-						var uploadUrl = "ajax.php?r=upload_log";
+						var uploadUrl = "ajax.php?r=upload_log&destination="+scope.view.destination;
 						fileUpload.uploadFileToUrl(file, uploadUrl, scope);
 						importStatus.show(200,'Uploading log file...','a');
 				   }

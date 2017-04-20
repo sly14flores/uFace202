@@ -12,7 +12,10 @@ class dtrImportNitgen {
 	
 	function __construct($table = "") {	
 	
-		$this->dir_db = (preg_match("/htdocs/i", $_SERVER['DOCUMENT_ROOT'])) ? $_SERVER['DOCUMENT_ROOT']."/uFace202/dtr-files" : $_SERVER['DOCUMENT_ROOT']."uFace202/dtr-files";
+		$dir = "sybase";	
+		if ($_GET['destination'] == "web") $dir = "web";	
+	
+		$this->dir_db = (preg_match("/htdocs/i", $_SERVER['DOCUMENT_ROOT'])) ? $_SERVER['DOCUMENT_ROOT']."/uFace202/$dir" : $_SERVER['DOCUMENT_ROOT']."uFace202/$dir";
 		$this->dbName = "NITGENDBAC.mdb";
 		$this->dbPathFile = $this->dir_db."/".$this->dbName;
 		$this->dbPathFile = str_replace("/","\\",$this->dbPathFile);
