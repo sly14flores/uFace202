@@ -17,17 +17,17 @@ $logs = [];
 
 // filter year and month/date
 $year = $_POST['year'];
-if (isset($_POST['month'])) {
-	
-	$month = $_POST['month'];
-	$filter = "$year-$month-";
-	
-}
 if (isset($_POST['date'])) {
 	
 	$date = substr($_POST['date'],0,10);
 	$filter = "$date";
 
+}
+if (isset($_POST['month'])) {
+	
+	$month = $_POST['month'];
+	$filter = "$year-$month-";
+	
 }
 
 foreach ($devices as $key => $device) {
@@ -86,17 +86,17 @@ $logs = [];
 
 // filter year and month/date
 $year = $_POST['year'];
-if (isset($_POST['month'])) {
-	
-	$month = $_POST['month'];
-	$filter = "WHERE Format(Month(Date)) = '".date("n",strtotime($_POST['year']."-".$_POST['month']."-01"))."' AND Format(Year(Date)) = '".date("Y",strtotime($_POST['year']."-".$_POST['month']."-01"))."'";
-	
-}
 if (isset($_POST['date'])) {
 	
 	$date = substr($_POST['date'],0,10);
 	$filter = "WHERE Format(Date,'Short Date') = #".date("m/d/Y",strtotime($_POST['date']))."#";
 
+}
+if (isset($_POST['month'])) {
+	
+	$month = $_POST['month'];
+	$filter = "WHERE Format(Month(Date)) = '".date("n",strtotime($_POST['year']."-".$_POST['month']."-01"))."' AND Format(Year(Date)) = '".date("Y",strtotime($_POST['year']."-".$_POST['month']."-01"))."'";
+	
 }
 
 $mseed = new dtrImportMSeed("DTR");

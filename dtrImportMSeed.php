@@ -10,10 +10,10 @@ class dtrImportMSeed {
 	var $sql;
 	var $table;
 	
-	function __construct($table = "") {	
+	function __construct($table = "") {
 		
 		$dir = "sybase";	
-		if ($_GET['destination'] == "web") $dir = "web";		
+		if (isset($_GET['destination'])) if ($_GET['destination'] == "web") $dir = "web";		
 		
 		$this->dir_db = (preg_match("/htdocs/i", $_SERVER['DOCUMENT_ROOT'])) ? $_SERVER['DOCUMENT_ROOT']."/uFace202/$dir" : $_SERVER['DOCUMENT_ROOT']."uFace202/$dir";
 		$this->dbName = "MSEEDBioOfficedb.mdb";

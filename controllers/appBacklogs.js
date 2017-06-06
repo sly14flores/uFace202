@@ -86,7 +86,7 @@ app.controller('appBacklogsCtrl', function($scope, $http, bootstrapModal) {
 		
 		if ($scope.query.month == null) delete $scope.query.month;
 		if ($scope.query.date == undefined) delete $scope.query.date;
-		console.log($scope.query);
+
 		$http({
 		  method: 'POST',
 		  url: 'controllers/appBacklogs.php',

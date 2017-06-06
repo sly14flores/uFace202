@@ -14,12 +14,12 @@ $year = (isset($_POST['year'])) ? $_POST['year'] : date("Y");
 $month = (isset($_POST['month'])) ? $_POST['month'] : "";
 $date = (isset($_POST['date'])) ? date("Y-m-d",strtotime($_POST['date'])) : "";
 
+if ($date != "") $filter = " WHERE log_time >= #$date 00:00:00# AND log_time <= #$date 23:59:09#";
+
 if ($month != "") {
 	$last_day = date("t",strtotime("$year-$month-01"));
 	$filter = " WHERE log_time >= #$year-$month-01 00:00:00# AND log_time <= #$year-$month-$last_day 23:59:09#";
 }
-
-if ($date != "") $filter = " WHERE log_time >= #$date 00:00:00# AND log_time <= #$date 23:59:09#";
 
 $backlog = new pdo_db("dtr");
 

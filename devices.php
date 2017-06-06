@@ -15,6 +15,6 @@ $devices = array(
 		"OPH6100066092900002"=>array("File"=>"OPH6100066092900002_attlog.dat","No"=>"6","Description"=>"uface 402 no 1")
 	);
 
-$device_description = array(1=>"Ground Floor, LBP ATM",2=>"Ground Floor, Information Center",3=>"Second Floor",4=>"Engineering",5=>"Admin");
+$device_description = array(1=>"Ground Floor, LBP ATM",2=>"Ground Floor, Information Center",3=>"Second Floor",4=>"Engineering",5=>"Admin",6=>"uface 402 no 1");
 
 ?>
