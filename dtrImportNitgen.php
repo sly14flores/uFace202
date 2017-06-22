@@ -30,7 +30,7 @@ class dtrImportNitgen {
 		
 		try {
 		
-			$this->db = new PDO("odbc:DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=".$this->dbPathFile."; Uid=; Pwd=nac3000;");
+			$this->db = new PDO("odbc:DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=".$this->dbPathFile."; Uid=; Pwd=123456;");
 		
 		} catch (PDOException $e) {
 
